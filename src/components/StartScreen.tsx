@@ -19,7 +19,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, highScore
   }, [onStartGame]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none">
+    <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none overflow-y-auto max-h-full">
       
       {/* High Score Banner */}
       <div className="w-full flex justify-between items-center px-2 py-1 md:px-4 md:py-2 border-b border-neutral-900 font-retro text-[8px] md:text-xs">

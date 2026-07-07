@@ -37,7 +37,7 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
   }, [onRestart]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none">
+    <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none overflow-y-auto max-h-full">
       
       {/* Header Banner */}
       <div className="w-full flex justify-center items-center py-1 md:py-2 border-b border-neutral-900">

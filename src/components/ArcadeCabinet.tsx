@@ -6,13 +6,13 @@ interface ArcadeCabinetProps {
 
 export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-4 md:p-8 retro-grid relative">
+    <div className="min-h-dvh bg-neutral-950 flex flex-col items-center justify-center p-2 sm:p-4 md:p-8 retro-grid relative">
       {/* Background neon ambient light */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-arcade-purple/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-arcade-pink/15 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Main Cabinet Wrapper */}
-      <div className="w-full max-w-4xl bg-neutral-900 border-x-8 border-t-8 border-neutral-800 rounded-t-3xl shadow-2xl relative flex flex-col glow-purple overflow-hidden">
+      <div className="w-full max-w-4xl h-[88dvh] md:h-auto bg-neutral-900 border-x-4 md:border-x-8 border-t-4 md:border-t-8 border-neutral-800 rounded-t-2xl md:rounded-t-3xl shadow-2xl relative flex flex-col glow-purple overflow-hidden">
         
         {/* Cabinet Marquee Header */}
         <div className="bg-neutral-950 border-b-4 border-neutral-800 p-4 relative flex flex-col items-center justify-center overflow-hidden">
@@ -50,7 +50,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
           <div className="absolute right-0 top-0 bottom-0 w-2 md:w-4 bg-gradient-to-l from-neutral-800 to-neutral-950" />
 
           {/* CRT Screen Wrapper */}
-          <div className="w-full aspect-[4/5] md:aspect-[4/3] max-w-3xl bg-neutral-950 border-4 border-neutral-800 rounded-2xl relative overflow-hidden crt-container shadow-inner">
+          <div className="w-full flex-1 md:flex-none md:aspect-[4/3] max-w-3xl bg-neutral-950 border-4 border-neutral-800 rounded-2xl relative overflow-hidden crt-container shadow-inner">
             {/* Scanline overlay */}
             <div className="scanline-effect" />
             
