@@ -50,7 +50,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
           <div className="absolute right-0 top-0 bottom-0 w-2 md:w-4 bg-gradient-to-l from-neutral-800 to-neutral-950" />
 
           {/* CRT Screen Wrapper */}
-          <div className="w-full aspect-[4/3] max-w-3xl bg-neutral-950 border-4 border-neutral-800 rounded-2xl relative overflow-hidden crt-container shadow-inner">
+          <div className="w-full aspect-[4/5] md:aspect-[4/3] max-w-3xl bg-neutral-950 border-4 border-neutral-800 rounded-2xl relative overflow-hidden crt-container shadow-inner">
             {/* Scanline overlay */}
             <div className="scanline-effect" />
             

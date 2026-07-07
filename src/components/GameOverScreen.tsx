@@ -37,32 +37,32 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
   }, [onRestart]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-between p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none">
+    <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none">
       
       {/* Header Banner */}
-      <div className="w-full flex justify-center items-center py-2 border-b border-neutral-900">
-        <h3 className="font-retro text-[9px] md:text-xs text-arcade-red glow-text-red tracking-widest animate-pulse">
+      <div className="w-full flex justify-center items-center py-1 md:py-2 border-b border-neutral-900">
+        <h3 className="font-retro text-[8px] md:text-xs text-arcade-red glow-text-red tracking-widest animate-pulse">
           ⚡ FIN DE LA PARTIE ⚡
         </h3>
       </div>
 
       {/* Main Stats Block */}
-      <div className="flex-1 flex flex-col justify-center items-center gap-5 py-6 w-full max-w-xs">
-        <div className="text-4xl animate-bounce">💀</div>
+      <div className="flex-1 flex flex-col justify-center items-center gap-3 md:gap-5 py-3 md:py-6 w-full max-w-xs">
+        <div className="text-3xl md:text-4xl animate-bounce">💀</div>
 
-        <h2 className="font-retro text-sm md:text-base text-center text-arcade-red tracking-wider">
+        <h2 className="font-retro text-xs md:text-base text-center text-arcade-red tracking-wider">
           CLASSE ENVAHIE !
         </h2>
 
         {/* Score & Level Display */}
-        <div className="w-full bg-neutral-950/60 border border-neutral-800 p-4 rounded-xl flex flex-col gap-3 font-sans text-xs">
+        <div className="w-full bg-neutral-950/60 border border-neutral-800 p-3 md:p-4 rounded-xl flex flex-col gap-2.5 md:gap-3 font-sans text-xs">
           <div className="flex justify-between items-center">
-            <span className="text-neutral-500 font-retro text-[8px]">SCORE :</span>
+            <span className="text-neutral-500 font-retro text-[7px] md:text-[8px]">SCORE :</span>
             <span className="font-retro text-xs text-arcade-cyan">{score} pts</span>
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-neutral-500 font-retro text-[8px]">NIVEAU :</span>
+            <span className="text-neutral-500 font-retro text-[7px] md:text-[8px]">NIVEAU :</span>
             <span className="font-retro text-xs text-arcade-yellow">Niv. {level}</span>
           </div>
 
@@ -87,10 +87,10 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
       </div>
 
       {/* Action Restart Button */}
-      <div className="py-6 flex flex-col items-center">
+      <div className="py-3 md:py-6 flex flex-col items-center">
         <button
           onClick={onRestart}
-          className="font-retro text-xs bg-gradient-to-r from-arcade-red to-arcade-yellow text-neutral-950 px-8 py-3 rounded-xl border-t-2 border-yellow-200 shadow-[0_4px_15px_rgba(245,158,11,0.2)] hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold select-none"
+          className="font-retro text-[10px] md:text-xs bg-gradient-to-r from-arcade-red to-arcade-yellow text-neutral-950 px-6 py-2.5 md:px-8 md:py-3 rounded-xl border-t-2 border-yellow-200 shadow-[0_4px_15px_rgba(245,158,11,0.2)] hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold select-none"
         >
           REJOUER
         </button>
