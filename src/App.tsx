@@ -48,7 +48,7 @@ function App() {
         <StartScreen onStartGame={handleStartGame} highScore={highScore} />
       )}
       {screen === 'play' && (
-        <GameScreen onGameOver={handleGameOver} highScore={highScore} />
+        <GameScreen onGameOver={handleGameOver} highScore={highScore} onExit={() => setScreen('start')} />
       )}
       {screen === 'gameover' && (
         <GameOverScreen

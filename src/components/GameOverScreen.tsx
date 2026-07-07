@@ -12,7 +12,7 @@ const getProfessorTitle = (score: number) => {
   if (score < 300) return { title: 'Remplaçant Fatigué 😴', color: 'text-arcade-yellow' };
   if (score < 600) return { title: 'Professeur Titulaire 👨‍🏫', color: 'text-arcade-cyan' };
   if (score < 1000) return { title: 'Directeur de Département 🎓', color: 'text-arcade-purple' };
-  return { title: 'Doyen Légendaire du Canadian College 👑', color: 'text-arcade-pink glow-text-pink' };
+  return { title: 'Doyen Légendaire 👑', color: 'text-arcade-pink glow-text-pink' };
 };
 
 export const GameOverScreen: React.FC<GameOverScreenProps> = ({
@@ -40,39 +40,35 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
     <div className="flex-1 flex flex-col items-center justify-between p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none">
       
       {/* Header Banner */}
-      <div className="w-full flex justify-center items-center py-2 border-b-2 border-dashed border-neutral-800">
-        <h3 className="font-retro text-xs md:text-sm text-arcade-red glow-text-red tracking-widest animate-pulse">
-          ⚡ GAME OVER ⚡
+      <div className="w-full flex justify-center items-center py-2 border-b border-neutral-900">
+        <h3 className="font-retro text-[9px] md:text-xs text-arcade-red glow-text-red tracking-widest animate-pulse">
+          ⚡ FIN DE LA PARTIE ⚡
         </h3>
       </div>
 
       {/* Main Stats Block */}
-      <div className="flex-1 flex flex-col justify-center items-center gap-6 py-6 w-full max-w-sm">
-        
-        {/* Skull and Chalkboard badge */}
-        <div className="text-4xl md:text-5xl animate-bounce">
-          💀🏫
-        </div>
+      <div className="flex-1 flex flex-col justify-center items-center gap-5 py-6 w-full max-w-xs">
+        <div className="text-4xl animate-bounce">💀</div>
 
-        <h2 className="font-retro text-lg md:text-2xl text-center text-arcade-red tracking-wider">
+        <h2 className="font-retro text-sm md:text-base text-center text-arcade-red tracking-wider">
           CLASSE ENVAHIE !
         </h2>
 
         {/* Score & Level Display */}
-        <div className="w-full bg-neutral-950/80 border-2 border-neutral-800 p-4 rounded-xl flex flex-col gap-3 font-sans">
-          <div className="flex justify-between items-center text-xs md:text-sm">
-            <span className="text-neutral-400 font-retro text-[9px] uppercase">Score Final :</span>
-            <span className="font-retro text-sm text-arcade-cyan">{score} pts</span>
+        <div className="w-full bg-neutral-950/60 border border-neutral-800 p-4 rounded-xl flex flex-col gap-3 font-sans text-xs">
+          <div className="flex justify-between items-center">
+            <span className="text-neutral-500 font-retro text-[8px]">SCORE :</span>
+            <span className="font-retro text-xs text-arcade-cyan">{score} pts</span>
           </div>
 
-          <div className="flex justify-between items-center text-xs md:text-sm">
-            <span className="text-neutral-400 font-retro text-[9px] uppercase">Niveau Atteint :</span>
-            <span className="font-retro text-sm text-arcade-yellow">Niv. {level}</span>
+          <div className="flex justify-between items-center">
+            <span className="text-neutral-500 font-retro text-[8px]">NIVEAU :</span>
+            <span className="font-retro text-xs text-arcade-yellow">Niv. {level}</span>
           </div>
 
           {isNewRecord && (
-            <div className="bg-arcade-pink/15 border border-arcade-pink px-3 py-1.5 rounded-lg text-center mt-1 animate-pulse">
-              <span className="font-retro text-[9px] text-arcade-pink block font-bold">🎉 NOUVEAU RECORD ! 🎉</span>
+            <div className="bg-arcade-pink/10 border border-arcade-pink px-2 py-1 rounded text-center mt-1">
+              <span className="font-retro text-[8px] text-arcade-pink font-bold">🎉 NOUVEAU RECORD ! 🎉</span>
             </div>
           )}
 
@@ -80,10 +76,10 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
 
           {/* Evaluation Grade */}
           <div className="text-center py-1">
-            <span className="text-[8px] font-retro text-neutral-500 block uppercase mb-1">
-              Évaluation Académique
+            <span className="text-[7px] font-retro text-neutral-500 block mb-1">
+              RÉSULTAT ACADÉMIQUE
             </span>
-            <span className={`font-retro text-[10px] md:text-xs font-extrabold ${color} block leading-normal`}>
+            <span className={`font-retro text-[9px] md:text-[10px] font-extrabold ${color} block leading-normal`}>
               {title}
             </span>
           </div>
@@ -91,17 +87,13 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
       </div>
 
       {/* Action Restart Button */}
-      <div className="py-6 flex flex-col items-center gap-2">
+      <div className="py-6 flex flex-col items-center">
         <button
           onClick={onRestart}
-          className="font-retro text-xs md:text-sm bg-gradient-to-r from-arcade-red to-arcade-yellow text-neutral-950 px-8 py-3.5 rounded-xl border-t-2 border-yellow-200 shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_4px_25px_rgba(245,158,11,0.6)] hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold select-none group"
+          className="font-retro text-xs bg-gradient-to-r from-arcade-red to-arcade-yellow text-neutral-950 px-8 py-3 rounded-xl border-t-2 border-yellow-200 shadow-[0_4px_15px_rgba(245,158,11,0.2)] hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold select-none"
         >
-          <span className="group-hover:animate-pulse">RECOMMENCER</span>
+          REJOUER
         </button>
-        
-        <p className="font-retro text-[8px] md:text-[9px] text-neutral-500 animate-pulse mt-2">
-          (OU APPUYEZ SUR ESPACE / ENTRÉE)
-        </p>
       </div>
 
     </div>

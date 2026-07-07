@@ -26,9 +26,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
             <span className="text-arcade-cyan glow-text-cyan">TAPPER</span>
           </h1>
           
-          <div className="text-[10px] md:text-xs font-retro text-arcade-yellow glow-text-yellow tracking-wider mt-1">
-            ★★★ SIMULATEUR DE PROFESSEUR ★★★
-          </div>
+
 
           {/* Speaker Grills */}
           <div className="w-full flex justify-between px-8 mt-2 opacity-40">
@@ -64,15 +62,12 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
         </div>
 
         {/* Cabinet Control Panel */}
-        <div className="bg-neutral-950 border-t-8 border-neutral-800 p-3 md:p-6 relative flex flex-row justify-between items-center gap-2 md:gap-4 overflow-hidden">
+        <div className="bg-neutral-950 border-t-8 border-neutral-800 p-3 md:p-4 relative flex flex-row justify-between items-center gap-2 md:gap-4 overflow-hidden">
           {/* Joystick Visual */}
-          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-left">
+          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-left pl-2">
             <div className="relative w-8 h-8 md:w-12 md:h-12 bg-neutral-800 rounded-full border-2 md:border-4 border-neutral-700 flex items-center justify-center">
               <div className="w-2 h-2 md:w-4 md:h-4 bg-neutral-900 rounded-full shadow-inner" />
               <div className="absolute -top-2 md:-top-3 w-4 h-4 md:w-6 md:h-6 bg-arcade-red rounded-full shadow-[0_0_8px_#ef4444] animate-bounce" />
-            </div>
-            <div className="text-left font-retro text-[7px] md:text-[10px] text-neutral-400 leading-normal">
-              <span className="text-arcade-cyan font-bold block md:inline">FLÈCHES</span> DÉPLACER
             </div>
           </div>
 
@@ -90,10 +85,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
           </div>
 
           {/* Action Buttons Visual */}
-          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-right">
-            <div className="text-right font-retro text-[7px] md:text-[10px] text-neutral-400 leading-normal">
-              <span className="text-arcade-pink font-bold block md:inline">ESPACE</span> LANCER
-            </div>
+          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-right pr-2">
             <div className="flex gap-1 md:gap-2">
               <div className="w-6 h-6 md:w-8 md:h-8 bg-arcade-pink rounded-full border border-pink-300 shadow-[0_0_6px_#ec4899]" />
               <div className="w-6 h-6 md:w-8 md:h-8 bg-arcade-cyan rounded-full border border-cyan-300 shadow-[0_0_6px_#06b6d4]" />

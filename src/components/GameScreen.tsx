@@ -77,6 +77,7 @@ interface HitPopup {
 interface GameScreenProps {
   onGameOver: (score: number, level: number) => void;
   highScore: number;
+  onExit: () => void;
 }
 
 const STUDENT_EMOJIS = ['🧑‍🎓', '👨‍🎓', '👩‍🎓', '🙋‍♂️', '🙋‍♀️'];
@@ -97,7 +98,7 @@ const STUDENT_EXCUSES = [
   "C'est noté ? 🤷‍♂️"
 ];
 
-export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore }) => {
+export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit }) => {
   // Safe ref for parent callbacks to avoid stale closures in requestAnimationFrame loop
   const onGameOverRef = useRef(onGameOver);
   useEffect(() => {
@@ -110,7 +111,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
   const [professorLane, setProfessorLane] = useState(1); // Starting lane (0 to 3)
   const [isLevelUpBanner, setIsLevelUpBanner] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [, setTick] = useState(0);
+
+  const isPausedRef = useRef(false);
+
+  const togglePause = () => {
+    const nextPaused = !isPausedRef.current;
+    isPausedRef.current = nextPaused;
+    setIsPaused(nextPaused);
+
+    if (!nextPaused) {
+      previousTimeRef.current = null;
+      requestRef.current = requestAnimationFrame(updateGame);
+    }
+  };
 
   // References for fast-paced physics loop
   const requestRef = useRef<number | null>(null);
@@ -137,7 +152,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
   // Handle Controls (Keyboard)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isGameOverTriggered.current) return;
+      if (e.key === 'Escape' || e.code === 'KeyP') {
+        e.preventDefault();
+        togglePause();
+        return;
+      }
+
+      if (isGameOverTriggered.current || isPausedRef.current) return;
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
@@ -207,7 +228,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
 
   // Game Loop physics calculations
   const updateGame = (time: number) => {
-    if (isGameOverTriggered.current) return;
+    if (isGameOverTriggered.current || isPausedRef.current) return;
 
     if (previousTimeRef.current === null) {
       previousTimeRef.current = time;
@@ -347,33 +368,46 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
     <div className={`flex-1 flex flex-col bg-slate-950 text-white select-none relative overflow-hidden ${isShaking ? 'animate-shake' : ''}`}>
       
       {/* Top HUD (Scoreboard & Stats) */}
-      <div className="bg-slate-900/90 border-b-2 border-slate-800 p-3 flex justify-between items-center relative z-10">
-        <div className="flex flex-col items-start gap-0.5">
-          <div className="font-retro text-[8px] text-neutral-400">SCORE</div>
-          <div className="font-retro text-xs md:text-sm text-arcade-cyan glow-text-cyan">
+      <div className="bg-slate-900/90 border-b border-slate-800 p-2 md:p-3 flex justify-between items-center relative z-10 font-retro">
+        
+        {/* Score column */}
+        <div className="flex flex-col items-start">
+          <div className="text-[7px] text-neutral-500">SCORE</div>
+          <div className="text-[11px] text-arcade-cyan glow-text-cyan mt-0.5">
             {String(score).padStart(5, '0')}
           </div>
         </div>
 
-        <div className="flex flex-col items-center">
-          <div className="font-retro text-[8px] text-neutral-400 mb-1">DIFICULTÉ</div>
-          <div className="flex gap-1">
-            {[...Array(5)].map((_, i) => (
-              <span 
-                key={i} 
-                className={`text-[9px] md:text-xs transition-opacity duration-300 ${
-                  i < level ? 'opacity-100 animate-pulse text-arcade-yellow' : 'opacity-20 text-neutral-600'
-                }`}
-              >
-                ★
-              </span>
-            ))}
+        {/* Center: Difficulty & Pause */}
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center">
+            <div className="text-[7px] text-neutral-500 mb-0.5">NIV. {level}</div>
+            <div className="flex gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <span 
+                  key={i} 
+                  className={`text-[8px] ${
+                    i < level ? 'text-arcade-yellow animate-pulse' : 'text-neutral-800'
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
           </div>
+          
+          <button 
+            onClick={togglePause}
+            className="px-2 py-1 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded text-[7px] text-white active:scale-95 transition-transform cursor-pointer"
+          >
+            PAUSE
+          </button>
         </div>
 
-        <div className="flex flex-col items-end gap-0.5">
-          <div className="font-retro text-[8px] text-neutral-400">RECORD</div>
-          <div className="font-retro text-xs md:text-sm text-arcade-pink glow-text-pink">
+        {/* Highscore column */}
+        <div className="flex flex-col items-end">
+          <div className="text-[7px] text-neutral-500 font-retro">RECORD</div>
+          <div className="text-[11px] text-arcade-pink glow-text-pink mt-0.5">
             {String(Math.max(highScore, score)).padStart(5, '0')}
           </div>
         </div>
@@ -405,14 +439,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
 
                 {/* Classroom desks Barrier (at X = 80%) */}
                 <div 
-                  className="absolute bottom-0 top-0 flex flex-col items-center justify-center border-l-2 border-dashed border-neutral-700/60"
+                  className="absolute bottom-0 top-0 flex items-center justify-center border-l-2 border-dashed border-neutral-700/60"
                   style={{ left: '80%', width: '6%' }}
                 >
-                  <div className="text-xl md:text-2xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                  <div className="text-lg md:text-2xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                     🪑
-                  </div>
-                  <div className="text-[7px] font-retro text-neutral-600 mt-1 uppercase hidden md:block">
-                    Bureau
                   </div>
                 </div>
 
@@ -517,6 +548,32 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
           </div>
         )}
 
+        {/* Pause Modal Overlay */}
+        {isPaused && (
+          <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-40">
+            <div className="bg-neutral-900 border-2 border-arcade-cyan p-6 rounded-2xl shadow-[0_0_15px_rgba(6,182,212,0.5)] text-center max-w-xs flex flex-col gap-4">
+              <h2 className="font-retro text-xs text-arcade-cyan glow-text-cyan uppercase tracking-widest animate-pulse">
+                JEU EN PAUSE
+              </h2>
+              
+              <div className="flex flex-col gap-3 font-retro text-[9px] mt-2">
+                <button
+                  onClick={togglePause}
+                  className="bg-arcade-cyan text-neutral-950 px-6 py-2.5 rounded-lg border-t border-cyan-200 hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
+                >
+                  REPRENDRE
+                </button>
+                <button
+                  onClick={() => onExit()}
+                  className="bg-neutral-800 text-arcade-red border border-arcade-red px-6 py-2.5 rounded-lg hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
+                >
+                  QUITTER
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Touch Controls Overlay */}
         <div className="absolute inset-x-0 bottom-0 pointer-events-none flex justify-between items-end p-3 z-30 md:hidden pb-4">
           {/* Left Side: Up & Down Navigation */}
@@ -544,23 +601,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
               onMouseDown={handleShoot}
               className="w-14 h-14 rounded-full bg-arcade-pink/90 border-2 border-pink-300 flex flex-col items-center justify-center text-white active:bg-arcade-pink active:scale-95 shadow-[0_0_15px_rgba(236,72,153,0.7)] font-retro select-none"
             >
-              <span className="text-[10px] uppercase font-bold tracking-wider leading-none">Lancer</span>
-              <span className="text-[11px] font-bold mt-0.5 leading-none">0</span>
+              <span className="text-[7.5px] md:text-[8px] uppercase font-bold tracking-widest leading-none">Tirer</span>
+              <span className="text-[11px] font-bold mt-1 leading-none">0</span>
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Footer / Controls quick-bar */}
-      <div className="bg-slate-950 border-t border-slate-900 px-4 py-2 flex justify-between text-neutral-500 font-retro text-[7px] md:text-[8.5px]">
-        <div>
-          <span className="text-arcade-cyan font-semibold">HAUT / BAS</span>: Allées
-        </div>
-        <div>
-          <span className="text-arcade-pink font-semibold">ESPACE</span>: Lancer un Zéro
-        </div>
-        <div>
-          PROF: <span className="text-white">👨‍🏫</span> • ÉLÈVE: <span className="text-white">🧑‍🎓</span>
         </div>
       </div>
 
