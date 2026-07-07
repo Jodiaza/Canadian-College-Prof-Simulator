@@ -174,6 +174,25 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
     examsRef.current.push(newExam);
   };
 
+  // Mobile touch event handlers for virtual controls
+  const handleMoveUp = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    if (isGameOverTriggered.current) return;
+    setProfessorLane((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleMoveDown = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    if (isGameOverTriggered.current) return;
+    setProfessorLane((prev) => Math.min(3, prev + 1));
+  };
+
+  const handleShoot = (e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
+    if (isGameOverTriggered.current) return;
+    shootExam();
+  };
+
   // Trigger floating text points popup
   const spawnPopup = (lane: number, x: number, text: string) => {
     const newPopup: HitPopup = {
@@ -497,6 +516,39 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore })
             </div>
           </div>
         )}
+
+        {/* Mobile Touch Controls Overlay */}
+        <div className="absolute inset-x-0 bottom-0 pointer-events-none flex justify-between items-end p-3 z-30 md:hidden pb-4">
+          {/* Left Side: Up & Down Navigation */}
+          <div className="flex flex-col gap-2.5 pointer-events-auto">
+            <button 
+              onTouchStart={handleMoveUp}
+              onMouseDown={handleMoveUp}
+              className="w-12 h-12 rounded-full bg-slate-900/85 border-2 border-arcade-cyan flex items-center justify-center text-white active:bg-arcade-cyan active:text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.6)] select-none text-base"
+            >
+              ▲
+            </button>
+            <button 
+              onTouchStart={handleMoveDown}
+              onMouseDown={handleMoveDown}
+              className="w-12 h-12 rounded-full bg-slate-900/85 border-2 border-arcade-cyan flex items-center justify-center text-white active:bg-arcade-cyan active:text-slate-950 shadow-[0_0_12px_rgba(6,182,212,0.6)] select-none text-base"
+            >
+              ▼
+            </button>
+          </div>
+
+          {/* Right Side: Shoot Button */}
+          <div className="pointer-events-auto">
+            <button 
+              onTouchStart={handleShoot}
+              onMouseDown={handleShoot}
+              className="w-14 h-14 rounded-full bg-arcade-pink/90 border-2 border-pink-300 flex flex-col items-center justify-center text-white active:bg-arcade-pink active:scale-95 shadow-[0_0_15px_rgba(236,72,153,0.7)] font-retro select-none"
+            >
+              <span className="text-[10px] uppercase font-bold tracking-wider leading-none">Lancer</span>
+              <span className="text-[11px] font-bold mt-0.5 leading-none">0</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Footer / Controls quick-bar */}

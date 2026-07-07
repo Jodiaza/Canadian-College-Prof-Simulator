@@ -64,17 +64,15 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
         </div>
 
         {/* Cabinet Control Panel */}
-        <div className="bg-neutral-950 border-t-8 border-neutral-800 p-4 md:p-6 relative flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="bg-neutral-950 border-t-8 border-neutral-800 p-3 md:p-6 relative flex flex-row justify-between items-center gap-2 md:gap-4 overflow-hidden">
           {/* Joystick Visual */}
-          <div className="flex items-center gap-4">
-            <div className="relative w-12 h-12 bg-neutral-800 rounded-full border-4 border-neutral-700 flex items-center justify-center">
-              <div className="w-4 h-4 bg-neutral-900 rounded-full shadow-inner" />
-              <div className="absolute -top-3 w-6 h-6 bg-arcade-red rounded-full shadow-[0_0_10px_#ef4444] animate-bounce" />
+          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-left">
+            <div className="relative w-8 h-8 md:w-12 md:h-12 bg-neutral-800 rounded-full border-2 md:border-4 border-neutral-700 flex items-center justify-center">
+              <div className="w-2 h-2 md:w-4 md:h-4 bg-neutral-900 rounded-full shadow-inner" />
+              <div className="absolute -top-2 md:-top-3 w-4 h-4 md:w-6 md:h-6 bg-arcade-red rounded-full shadow-[0_0_8px_#ef4444] animate-bounce" />
             </div>
-            <div className="text-left font-retro text-[9px] md:text-[10px] text-neutral-400 leading-relaxed">
-              <span className="text-arcade-cyan font-bold">FLÈCHES HAUT / BAS</span>
-              <br />
-              DÉPLACER LE PROF
+            <div className="text-left font-retro text-[7px] md:text-[10px] text-neutral-400 leading-normal">
+              <span className="text-arcade-cyan font-bold block md:inline">FLÈCHES</span> DÉPLACER
             </div>
           </div>
 
@@ -92,15 +90,13 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
           </div>
 
           {/* Action Buttons Visual */}
-          <div className="flex items-center gap-4">
-            <div className="text-right font-retro text-[9px] md:text-[10px] text-neutral-400 leading-relaxed">
-              <span className="text-arcade-pink font-bold">BARRE D'ESPACE</span>
-              <br />
-              LANCER UN ZÉRO ("0")
+          <div className="flex items-center gap-2 md:gap-4 scale-90 sm:scale-100 origin-right">
+            <div className="text-right font-retro text-[7px] md:text-[10px] text-neutral-400 leading-normal">
+              <span className="text-arcade-pink font-bold block md:inline">ESPACE</span> LANCER
             </div>
-            <div className="flex gap-2">
-              <div className="w-8 h-8 bg-arcade-pink rounded-full border-2 border-pink-300 shadow-[0_0_8px_#ec4899] active:scale-95 transition-transform" />
-              <div className="w-8 h-8 bg-arcade-cyan rounded-full border-2 border-cyan-300 shadow-[0_0_8px_#06b6d4] active:scale-95 transition-transform" />
+            <div className="flex gap-1 md:gap-2">
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-arcade-pink rounded-full border border-pink-300 shadow-[0_0_6px_#ec4899]" />
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-arcade-cyan rounded-full border border-cyan-300 shadow-[0_0_6px_#06b6d4]" />
             </div>
           </div>
         </div>
