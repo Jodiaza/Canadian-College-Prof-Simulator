@@ -23,7 +23,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({ children }) => {
           <h1 className="font-retro text-lg md:text-2xl tracking-widest text-center py-2 select-none animate-pulse">
             <span className="text-arcade-pink glow-text-pink">CANADIAN</span>{' '}
             <span className="text-white">COLLEGE</span>{' '}
-            <span className="text-arcade-cyan glow-text-cyan">TAPPER</span>
+            <span className="text-arcade-cyan glow-text-cyan">SIMULATOR</span>
           </h1>
           
 
