@@ -411,7 +411,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
       if (hitBonus) {
         hitBonus.status = 'destroyed';
         examsRef.current.splice(examIdx, 1);
-        spawnPopup(exam.lane, exam.x, language === 'fr' ? "GÂCHÉ ! 💥" : "WASTED ! 💥");
+        
+        // Subtract 20 points
+        scoreRef.current = Math.max(0, scoreRef.current - 20);
+        setScore(scoreRef.current);
+        
+        spawnPopup(exam.lane, exam.x, language === 'fr' ? "-20 GÂCHÉ ! 💥" : "-20 WASTED ! 💥");
         return; // Hit bonus, don't hit student
       }
 
@@ -465,7 +470,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
         scoreRef.current += points;
         setScore(scoreRef.current);
         playSound('levelUp');
-        spawnPopup(b.lane, b.x, `+${points} 🥟`);
+        spawnPopup(b.lane, b.x, `+${points} ☕`);
       }
     });
 
@@ -619,7 +624,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
                       style={{ left: `${bonus.x}%`, zIndex: 9 }}
                     >
                       <div className="text-2xl md:text-3.5xl filter drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] animate-pulse">
-                        🥟
+                        ☕
                       </div>
                     </div>
                   ))}
