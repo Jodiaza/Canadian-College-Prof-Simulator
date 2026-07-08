@@ -123,9 +123,11 @@ const STUDENT_EXCUSES = [
   "Mot de passe perdu ! 🔑",
   "Pas vu l'heure ! 🕛",
   "Mon chat est malade ! 🐱",
-  "Mon micro buggait ! 🎙️",
-  "J'ai pas le PDF ! 📄",
-  "Pas reçu le mail ! 📧"
+  "J'ai pas le livre ! 📖",
+  "Pas reçu le lien ! 🔗",
+  "Y a match ce soir ! ⚽",
+  "Me suis endormi ! 😴",
+  "Le SPC buggait ! ❌"
 ];
 
 export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit }) => {
