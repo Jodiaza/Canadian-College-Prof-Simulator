@@ -1,9 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// Shared AudioContext to prevent exceeding maximum audio context count in browser
+let sharedAudioCtx: AudioContext | null = null;
+
+const getAudioContext = (): AudioContext | null => {
+  if (typeof window === 'undefined') return null;
+  if (!sharedAudioCtx) {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      sharedAudioCtx = new AudioContextClass();
+    }
+  }
+  if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+    sharedAudioCtx.resume().catch((e) => console.warn('Failed to resume AudioContext', e));
+  }
+  return sharedAudioCtx;
+};
+
 // Retro Synth Audio Player using Web Audio API
 const playSound = (type: 'throw' | 'hit' | 'levelUp' | 'gameOver') => {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
@@ -83,19 +102,30 @@ interface GameScreenProps {
 const STUDENT_EMOJIS = ['🧑‍🎓', '👨‍🎓', '👩‍🎓', '🙋‍♂️', '🙋‍♀️'];
 
 const STUDENT_EXCUSES = [
+  "En retard ! 🏃‍♂️",
   "Pas d'bus ! 🚌",
-  "Piscine ! 🏊",
+  "J'ai piscine ! 🏊",
   "Le chien a tout mangé ! 🐶",
   "Pas de réseau ! 📶",
-  "Mon Teams a planté ! 💻",
+  "Teams a planté ! 💻",
   "Pas réveillé ! ⏰",
   "Pas compris ! 🤨",
-  "Y avait des bouchons ! 🚗",
+  "Les bouchons ! 🚗",
   "J'ai oublié ! 🧠",
   "J'ai pas le lien ! 🔗",
   "Grosse flemme... 😴",
   "Y avait grève ! 🚆",
-  "C'est noté ? 🤷‍♂️"
+  "C'est noté ? 🤷‍♂️",
+  "Plateforme en panne ! ❌",
+  "Panne de courant ! 🔌",
+  "J'étais bloqué ! 🔒",
+  "Pas d'ordinateur ! 🖥️",
+  "Mot de passe perdu ! 🔑",
+  "Pas vu l'heure ! 🕛",
+  "Mon chat est malade ! 🐱",
+  "Mon micro buggait ! 🎙️",
+  "J'ai pas le PDF ! 📄",
+  "Pas reçu le mail ! 📧"
 ];
 
 export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit }) => {
@@ -115,6 +145,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
   const [, setTick] = useState(0);
 
   const isPausedRef = useRef(false);
+  const isLevelUpRef = useRef(false);
 
   const togglePause = () => {
     const nextPaused = !isPausedRef.current;
@@ -125,6 +156,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
       previousTimeRef.current = null;
       requestRef.current = requestAnimationFrame(updateGame);
     }
+  };
+
+  const handleContinueNextLevel = () => {
+    setIsLevelUpBanner(false);
+    isLevelUpRef.current = false;
+    previousTimeRef.current = null;
+    lastSpawnTime.current = performance.now();
+    requestRef.current = requestAnimationFrame(updateGame);
   };
 
   // References for fast-paced physics loop
@@ -158,7 +197,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
         return;
       }
 
-      if (isGameOverTriggered.current || isPausedRef.current) return;
+      if (isGameOverTriggered.current || isPausedRef.current || isLevelUpRef.current) return;
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
@@ -239,7 +278,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
 
   // Game Loop physics calculations
   const updateGame = (time: number) => {
-    if (isGameOverTriggered.current || isPausedRef.current) return;
+    if (isGameOverTriggered.current || isPausedRef.current || isLevelUpRef.current) return;
 
     if (previousTimeRef.current === null) {
       previousTimeRef.current = time;
@@ -335,12 +374,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
         if (nextLevel > levelRef.current) {
           levelRef.current = nextLevel;
           setLevel(nextLevel);
+          
+          isLevelUpRef.current = true;
           setIsLevelUpBanner(true);
           playSound('levelUp');
-          
-          setTimeout(() => {
-            setIsLevelUpBanner(false);
-          }, 1500);
+
+          // Reset all active entities so the new level starts fresh from scratch
+          studentsRef.current = [];
+          examsRef.current = [];
+          popupsRef.current = [];
         }
       }
     });
@@ -543,18 +585,25 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
 
         {/* Level Up Banner Alert Overlay */}
         {isLevelUpBanner && (
-          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-30 transition-all duration-300">
-            <div className="bg-neutral-900 border-2 border-arcade-yellow p-6 rounded-2xl glow-cyan text-center max-w-xs animate-bounce">
-              <span className="text-3xl">🚀</span>
-              <h2 className="font-retro text-sm md:text-base text-arcade-yellow glow-text-yellow mt-2 uppercase tracking-widest">
+          <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center z-30">
+            <div className="bg-neutral-900 border-2 border-arcade-yellow p-5 rounded-2xl shadow-[0_0_15px_rgba(245,158,11,0.5)] text-center max-w-xs flex flex-col items-center gap-3">
+              <span className="text-3xl animate-bounce">🚀</span>
+              <h2 className="font-retro text-[10px] md:text-xs text-arcade-yellow glow-text-yellow uppercase tracking-widest leading-normal">
                 NIVEAU SUPÉRIEUR !
               </h2>
-              <p className="font-retro text-[9px] text-white mt-3">
-                Niveau {level} / 5
+              <p className="font-retro text-[9px] text-white mt-1">
+                NIVEAU {level} / 5
               </p>
-              <p className="font-sans text-xs text-neutral-400 mt-1">
-                La vitesse des élèves augmente !
+              <p className="font-sans text-xs text-neutral-400 leading-relaxed">
+                Félicitations ! Les étudiants avancent maintenant plus vite.
               </p>
+              
+              <button
+                onClick={handleContinueNextLevel}
+                className="mt-2 bg-arcade-yellow text-neutral-950 font-retro text-[8px] font-bold px-6 py-2.5 rounded-lg border-t border-yellow-200 active:scale-95 transition-transform cursor-pointer select-none"
+              >
+                CONTINUER
+              </button>
             </div>
           </div>
         )}
