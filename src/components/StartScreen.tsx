@@ -25,21 +25,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, highScore
   return (
     <div className="flex-1 flex flex-col items-center justify-between p-3 md:p-6 bg-radial from-neutral-900 via-neutral-950 to-black text-white relative select-none overflow-y-auto max-h-full">
       
-      {/* Language Selector */}
-      <div className="absolute top-2 right-2 md:top-4 md:right-4 flex gap-2 font-retro text-[8px] md:text-[10px]">
-        <button 
-          onClick={() => onLanguageChange('fr')}
-          className={`px-2 py-1 border rounded ${language === 'fr' ? 'bg-arcade-cyan text-black border-arcade-cyan shadow-[0_0_8px_#22d3ee]' : 'bg-transparent text-neutral-500 border-neutral-700 hover:text-white'}`}
-        >
-          FR
-        </button>
-        <button 
-          onClick={() => onLanguageChange('en')}
-          className={`px-2 py-1 border rounded ${language === 'en' ? 'bg-arcade-cyan text-black border-arcade-cyan shadow-[0_0_8px_#22d3ee]' : 'bg-transparent text-neutral-500 border-neutral-700 hover:text-white'}`}
-        >
-          EN
-        </button>
-      </div>
 
       {/* High Score Banner */}
       <div className="w-full flex justify-between items-center px-2 py-1 md:px-4 md:py-2 border-b border-neutral-900 font-retro text-[8px] md:text-xs">
@@ -101,6 +86,22 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, highScore
         >
           {language === 'fr' ? 'JOUER' : 'PLAY'}
         </button>
+
+        {/* Language Selector */}
+        <div className="flex gap-2 font-retro text-[8px] md:text-[10px] mt-4">
+          <button 
+            onClick={() => onLanguageChange('fr')}
+            className={`px-3 py-1.5 border rounded ${language === 'fr' ? 'bg-arcade-cyan text-black border-arcade-cyan shadow-[0_0_8px_#22d3ee]' : 'bg-transparent text-neutral-500 border-neutral-700 hover:text-white'}`}
+          >
+            FR
+          </button>
+          <button 
+            onClick={() => onLanguageChange('en')}
+            className={`px-3 py-1.5 border rounded ${language === 'en' ? 'bg-arcade-cyan text-black border-arcade-cyan shadow-[0_0_8px_#22d3ee]' : 'bg-transparent text-neutral-500 border-neutral-700 hover:text-white'}`}
+          >
+            EN
+          </button>
+        </div>
       </div>
 
     </div>
