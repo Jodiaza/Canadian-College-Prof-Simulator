@@ -195,21 +195,32 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
     examsRef.current.push(newExam);
   };
 
-  // Mobile touch event handlers for virtual controls
+  // Touch debounce to prevent browser-simulated mouse events after touch events on mobile
+  const lastTouchTimeRef = useRef(0);
+
   const handleMoveUp = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
+    if (e.type === 'mousedown' && Date.now() - lastTouchTimeRef.current < 500) return;
+    if (e.type === 'touchstart') lastTouchTimeRef.current = Date.now();
+
     if (isGameOverTriggered.current) return;
     setProfessorLane((prev) => Math.max(0, prev - 1));
   };
 
   const handleMoveDown = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
+    if (e.type === 'mousedown' && Date.now() - lastTouchTimeRef.current < 500) return;
+    if (e.type === 'touchstart') lastTouchTimeRef.current = Date.now();
+
     if (isGameOverTriggered.current) return;
     setProfessorLane((prev) => Math.min(3, prev + 1));
   };
 
   const handleShoot = (e: React.TouchEvent | React.MouseEvent) => {
     e.preventDefault();
+    if (e.type === 'mousedown' && Date.now() - lastTouchTimeRef.current < 500) return;
+    if (e.type === 'touchstart') lastTouchTimeRef.current = Date.now();
+
     if (isGameOverTriggered.current) return;
     shootExam();
   };
@@ -398,9 +409,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
           
           <button 
             onClick={togglePause}
-            className="px-2 py-1 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded text-[7px] text-white active:scale-95 transition-transform cursor-pointer"
+            className="px-2.5 py-1.5 bg-arcade-yellow text-neutral-950 border-t border-yellow-200 rounded font-retro text-[8px] font-bold shadow-[0_0_8px_rgba(245,158,11,0.6)] hover:scale-105 active:scale-90 transition-transform cursor-pointer select-none"
           >
-            PAUSE
+            ⏸ PAUSE
           </button>
         </div>
 
