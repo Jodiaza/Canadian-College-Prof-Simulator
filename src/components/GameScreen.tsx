@@ -85,6 +85,13 @@ interface Exam {
   x: number; // 0 to 100
 }
 
+interface FoodBonus {
+  id: number;
+  lane: number;
+  x: number;
+  status: 'active' | 'destroyed' | 'eaten';
+}
+
 interface HitPopup {
   id: number;
   lane: number;
@@ -174,6 +181,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
 
   const studentsRef = useRef<Student[]>([]);
   const examsRef = useRef<Exam[]>([]);
+  const bonusesRef = useRef<FoodBonus[]>([]);
   const popupsRef = useRef<HitPopup[]>([]);
   const professorLaneRef = useRef<number>(1);
   const scoreRef = useRef<number>(0);
@@ -182,6 +190,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
 
   const nextStudentId = useRef(0);
   const nextExamId = useRef(0);
+  const nextBonusId = useRef(0);
   const nextPopupId = useRef(0);
   const lastSpawnTime = useRef(0);
 
@@ -305,16 +314,25 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
       // Limit number of students in the same lane to 2 at once to keep it playable
       const studentsInLane = studentsRef.current.filter((s) => s.lane === lane);
       if (studentsInLane.length < 2) {
-        const randomEmoji = STUDENT_EMOJIS[Math.floor(Math.random() * STUDENT_EMOJIS.length)];
-        const randomExcuse = STUDENT_EXCUSES[Math.floor(Math.random() * STUDENT_EXCUSES.length)];
-        studentsRef.current.push({
-          id: nextStudentId.current++,
-          lane,
-          x: 0, // start at left end
-          status: 'active',
-          emoji: randomEmoji,
-          excuse: randomExcuse,
-        });
+        if (Math.random() < 0.12) {
+          bonusesRef.current.push({
+            id: nextBonusId.current++,
+            lane,
+            x: 0,
+            status: 'active',
+          });
+        } else {
+          const randomEmoji = STUDENT_EMOJIS[Math.floor(Math.random() * STUDENT_EMOJIS.length)];
+          const randomExcuse = STUDENT_EXCUSES[Math.floor(Math.random() * STUDENT_EXCUSES.length)];
+          studentsRef.current.push({
+            id: nextStudentId.current++,
+            lane,
+            x: 0, // start at left end
+            status: 'active',
+            emoji: randomEmoji,
+            excuse: randomExcuse,
+          });
+        }
       }
     }
 
@@ -339,6 +357,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
       })
       .filter((st) => st.x >= 0); // Remove if they retreat past the left edge
 
+    // 3.5 Update Bonuses Position
+    bonusesRef.current = bonusesRef.current
+      .map((b) => ({ ...b, x: b.x + baseSpeed * 1.3 * elapsed }))
+      .filter((b) => b.x <= 100 && b.status === 'active'); // Keep on screen if active
+
     // 4. Update floating score popups
     popupsRef.current = popupsRef.current
       .map((p) => ({ ...p, age: p.age + 1 }))
@@ -348,6 +371,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
     const hitDistance = 4.5; // X-axis distance for collision
     
     examsRef.current.forEach((exam, examIdx) => {
+      // Find the closest active bonus first
+      const hitBonus = bonusesRef.current.find(
+        (b) => b.lane === exam.lane && b.status === 'active' && Math.abs(b.x - exam.x) < hitDistance
+      );
+
+      if (hitBonus) {
+        hitBonus.status = 'destroyed';
+        examsRef.current.splice(examIdx, 1);
+        spawnPopup(exam.lane, exam.x, "GÂCHÉ ! 💥");
+        return; // Hit bonus, don't hit student
+      }
+
       // Find the closest active student in the same lane
       const hitStudent = studentsRef.current.find(
         (st) => st.lane === exam.lane && st.status === 'active' && Math.abs(st.x - exam.x) < hitDistance
@@ -384,8 +419,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
           // Reset all active entities so the new level starts fresh from scratch
           studentsRef.current = [];
           examsRef.current = [];
+          bonusesRef.current = [];
           popupsRef.current = [];
         }
+      }
+    });
+
+    // 5.5 Check Bonuses Eaten
+    bonusesRef.current.forEach((b) => {
+      if (b.status === 'active' && b.x >= 80) {
+        b.status = 'eaten';
+        const points = 50;
+        scoreRef.current += points;
+        setScore(scoreRef.current);
+        playSound('levelUp');
+        spawnPopup(b.lane, b.x, `+${points} 🥟`);
       }
     });
 
@@ -525,6 +573,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
                         student.status === 'retreating' ? 'opacity-85 animate-pulse' : ''
                       }`}>
                         {student.status === 'retreating' ? '😭' : student.emoji}
+                      </div>
+                    </div>
+                  ))}
+
+                {/* Render Bonuses in this lane */}
+                {bonusesRef.current
+                  .filter((b) => b.lane === laneIndex && b.status === 'active')
+                  .map((bonus) => (
+                    <div
+                      key={`bonus-${bonus.id}`}
+                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center select-none"
+                      style={{ left: `${bonus.x}%`, zIndex: 9 }}
+                    >
+                      <div className="text-2xl md:text-3.5xl filter drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] animate-pulse">
+                        🥟
                       </div>
                     </div>
                   ))}
