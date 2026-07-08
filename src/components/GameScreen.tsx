@@ -109,11 +109,10 @@ const STUDENT_EXCUSES = [
   "Pas de réseau ! 📶",
   "Zoom a planté ! 💻",
   "Pas réveillé ! ⏰",
-  "Pas compris ! 🤨",
   "Les bouchons ! 🚗",
   "J'ai oublié ! 🧠",
   "Mon micro buggait ! 🎙️",
-  "Grosse flemme... 😴",
+  "J'avais la flemme ! 🥱",
   "Y avait grève ! 🚆",
   "C'est noté ? 🤷‍♂️",
   "Plateforme en panne ! ❌",
@@ -127,7 +126,8 @@ const STUDENT_EXCUSES = [
   "Pas reçu le lien ! 🔗",
   "Y a match ce soir ! ⚽",
   "Me suis endormi ! 😴",
-  "Le SPC buggait ! ❌"
+  "Le SPC buggait ! ❌",
+  "Caméra en panne ! 📷"
 ];
 
 export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit }) => {
