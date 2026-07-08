@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import type { Language } from '../App';
 
 // Shared AudioContext to prevent exceeding maximum audio context count in browser
 let sharedAudioCtx: AudioContext | null = null;
@@ -104,40 +105,71 @@ interface GameScreenProps {
   onGameOver: (score: number, level: number) => void;
   highScore: number;
   onExit: () => void;
+  language: Language;
 }
 
 const STUDENT_EMOJIS = ['🧑‍🎓', '👨‍🎓', '👩‍🎓', '🙋‍♂️', '🙋‍♀️'];
 
-const STUDENT_EXCUSES = [
-  "En retard ! 🏃‍♂️",
-  "Pas d'bus ! 🚌",
-  "J'ai piscine ! 🏊",
-  "Le chien a tout mangé ! 🐶",
-  "Pas de réseau ! 📶",
-  "Zoom a planté ! 💻",
-  "Pas réveillé ! ⏰",
-  "Les bouchons ! 🚗",
-  "J'ai oublié ! 🧠",
-  "Mon micro buggait ! 🎙️",
-  "J'avais la flemme ! 🥱",
-  "Y avait grève ! 🚆",
-  "C'est noté ? 🤷‍♂️",
-  "Plateforme en panne ! ❌",
-  "Panne de courant ! 🔌",
-  "J'étais bloqué ! 🔒",
-  "Pas d'ordinateur ! 🖥️",
-  "Mot de passe perdu ! 🔑",
-  "Pas vu l'heure ! 🕛",
-  "Mon chat est malade ! 🐱",
-  "J'ai pas le livre ! 📖",
-  "Pas reçu le lien ! 🔗",
-  "Y a match ce soir ! ⚽",
-  "Me suis endormi ! 😴",
-  "Le SPC buggait ! ❌",
-  "Caméra en panne ! 📷"
-];
+const STUDENT_EXCUSES = {
+  fr: [
+    "En retard ! 🏃‍♂️",
+    "Pas d'bus ! 🚌",
+    "J'ai piscine ! 🏊",
+    "Le chien a tout mangé ! 🐶",
+    "Pas de réseau ! 📶",
+    "Zoom a planté ! 💻",
+    "Pas réveillé ! ⏰",
+    "Les bouchons ! 🚗",
+    "J'ai oublié ! 🧠",
+    "Mon micro buggait ! 🎙️",
+    "J'avais la flemme ! 🥱",
+    "Y avait grève ! 🚆",
+    "C'est noté ? 🤷‍♂️",
+    "Plateforme en panne ! ❌",
+    "Panne de courant ! 🔌",
+    "J'étais bloqué ! 🔒",
+    "Pas d'ordinateur ! 🖥️",
+    "Mot de passe perdu ! 🔑",
+    "Pas vu l'heure ! 🕛",
+    "Mon chat est malade ! 🐱",
+    "J'ai pas le livre ! 📖",
+    "Pas reçu le lien ! 🔗",
+    "Y a match ce soir ! ⚽",
+    "Me suis endormi ! 😴",
+    "Le SPC buggait ! ❌",
+    "Caméra en panne ! 📷"
+  ],
+  en: [
+    "I'm late! 🏃‍♂️",
+    "No bus! 🚌",
+    "I had swimming! 🏊",
+    "Dog ate it! 🐶",
+    "No wifi! 📶",
+    "Zoom crashed! 💻",
+    "Overslept! ⏰",
+    "Traffic jam! 🚗",
+    "I forgot! 🧠",
+    "Mic broken! 🎙️",
+    "I was lazy! 🥱",
+    "There was a strike! 🚆",
+    "Is this graded? 🤷‍♂️",
+    "Platform down! ❌",
+    "Power outage! 🔌",
+    "I was locked out! 🔒",
+    "No computer! 🖥️",
+    "Lost password! 🔑",
+    "Lost track of time! 🕛",
+    "Cat is sick! 🐱",
+    "I don't have the book! 📖",
+    "Didn't get the link! 🔗",
+    "There's a game tonight! ⚽",
+    "Fell asleep! 😴",
+    "SPC was bugging! ❌",
+    "Camera broken! 📷"
+  ]
+};
 
-export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit }) => {
+export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, onExit, language }) => {
   // Safe ref for parent callbacks to avoid stale closures in requestAnimationFrame loop
   const onGameOverRef = useRef(onGameOver);
   useEffect(() => {
@@ -323,7 +355,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
           });
         } else {
           const randomEmoji = STUDENT_EMOJIS[Math.floor(Math.random() * STUDENT_EMOJIS.length)];
-          const randomExcuse = STUDENT_EXCUSES[Math.floor(Math.random() * STUDENT_EXCUSES.length)];
+          const randomExcuse = STUDENT_EXCUSES[language][Math.floor(Math.random() * STUDENT_EXCUSES[language].length)];
           studentsRef.current.push({
             id: nextStudentId.current++,
             lane,
@@ -379,7 +411,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
       if (hitBonus) {
         hitBonus.status = 'destroyed';
         examsRef.current.splice(examIdx, 1);
-        spawnPopup(exam.lane, exam.x, "GÂCHÉ ! 💥");
+        spawnPopup(exam.lane, exam.x, language === 'fr' ? "GÂCHÉ ! 💥" : "WASTED ! 💥");
         return; // Hit bonus, don't hit student
       }
 
@@ -484,7 +516,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
         {/* Center: Difficulty & Pause */}
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center">
-            <div className="text-[7px] text-neutral-500 mb-0.5">NIV. {level}</div>
+            <div className="text-[7px] text-neutral-500 mb-0.5">{language === 'fr' ? 'NIV.' : 'LVL'} {level}</div>
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <span 
@@ -509,7 +541,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
 
         {/* Highscore column */}
         <div className="flex flex-col items-end">
-          <div className="text-[7px] text-neutral-500 font-retro">RECORD</div>
+          <div className="text-[7px] text-neutral-500 font-retro">{language === 'fr' ? 'RECORD' : 'HIGHSCORE'}</div>
           <div className="text-[11px] text-arcade-pink glow-text-pink mt-0.5">
             {String(Math.max(highScore, score)).padStart(5, '0')}
           </div>
@@ -565,7 +597,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
                           ? 'bg-red-950/90 text-arcade-red border-arcade-red animate-bounce' 
                           : 'bg-slate-900/90 text-arcade-yellow border-slate-800'
                       }`}>
-                        {student.status === 'retreating' ? 'Rattrapage ! 😭' : student.excuse}
+                        {student.status === 'retreating' ? (language === 'fr' ? 'Rattrapage ! 😭' : 'Detention ! 😭') : student.excuse}
                       </span>
                       
                       {/* Student Body (Emoji) */}
@@ -635,7 +667,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
                   <div className="absolute right-[4%] top-1/2 -translate-y-1/2 flex flex-col items-center select-none z-15">
                     {/* Glowing status bubble */}
                     <div className="bg-arcade-pink/90 border border-pink-300 font-retro text-[7px] md:text-[8px] text-white px-1.5 py-0.5 rounded shadow-[0_0_8px_#ec4899] mb-1 animate-pulse">
-                      PROF
+                      {language === 'fr' ? 'PROF' : 'TEACHER'}
                     </div>
                     {/* Professor Character Emoji */}
                     <div className="text-3xl md:text-4xl filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] animate-pulse">
@@ -654,20 +686,20 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
             <div className="bg-neutral-900 border-2 border-arcade-yellow p-5 rounded-2xl shadow-[0_0_15px_rgba(245,158,11,0.5)] text-center max-w-xs flex flex-col items-center gap-3">
               <span className="text-3xl animate-bounce">🚀</span>
               <h2 className="font-retro text-[10px] md:text-xs text-arcade-yellow glow-text-yellow uppercase tracking-widest leading-normal">
-                NIVEAU SUPÉRIEUR !
+                {language === 'fr' ? 'NIVEAU SUPÉRIEUR !' : 'LEVEL UP !'}
               </h2>
               <p className="font-retro text-[9px] text-white mt-1">
-                NIVEAU {level} / 5
+                {language === 'fr' ? 'NIVEAU' : 'LEVEL'} {level} / 5
               </p>
               <p className="font-sans text-xs text-neutral-400 leading-relaxed">
-                Félicitations ! Les étudiants avancent maintenant plus vite.
+                {language === 'fr' ? 'Félicitations ! Les étudiants avancent maintenant plus vite.' : 'Congratulations ! Students move faster now.'}
               </p>
               
               <button
                 onClick={handleContinueNextLevel}
                 className="mt-2 bg-arcade-yellow text-neutral-950 font-retro text-[8px] font-bold px-6 py-2.5 rounded-lg border-t border-yellow-200 active:scale-95 transition-transform cursor-pointer select-none"
               >
-                CONTINUER
+                {language === 'fr' ? 'CONTINUER' : 'CONTINUE'}
               </button>
             </div>
           </div>
@@ -678,7 +710,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
           <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-40">
             <div className="bg-neutral-900 border-2 border-arcade-cyan p-6 rounded-2xl shadow-[0_0_15px_rgba(6,182,212,0.5)] text-center max-w-xs flex flex-col gap-4">
               <h2 className="font-retro text-xs text-arcade-cyan glow-text-cyan uppercase tracking-widest animate-pulse">
-                JEU EN PAUSE
+                {language === 'fr' ? 'JEU EN PAUSE' : 'GAME PAUSED'}
               </h2>
               
               <div className="flex flex-col gap-3 font-retro text-[9px] mt-2">
@@ -686,13 +718,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onGameOver, highScore, o
                   onClick={togglePause}
                   className="bg-arcade-cyan text-neutral-950 px-6 py-2.5 rounded-lg border-t border-cyan-200 hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
                 >
-                  REPRENDRE
+                  {language === 'fr' ? 'REPRENDRE' : 'RESUME'}
                 </button>
                 <button
                   onClick={() => onExit()}
                   className="bg-neutral-800 text-arcade-red border border-arcade-red px-6 py-2.5 rounded-lg hover:scale-105 active:scale-95 transition-all cursor-pointer font-bold"
                 >
-                  QUITTER
+                  {language === 'fr' ? 'QUITTER' : 'QUIT'}
                 </button>
               </div>
             </div>

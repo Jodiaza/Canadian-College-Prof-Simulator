@@ -4,6 +4,8 @@ import { StartScreen } from './components/StartScreen';
 import { GameScreen } from './components/GameScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 
+export type Language = 'fr' | 'en';
+
 type ScreenState = 'start' | 'play' | 'gameover';
 
 function App() {
@@ -11,6 +13,7 @@ function App() {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [highScore, setHighScore] = useState(0);
+  const [language, setLanguage] = useState<Language>('fr');
 
   // Load High Score from localStorage on mount
   useEffect(() => {
@@ -18,7 +21,16 @@ function App() {
     if (savedHighScore) {
       setHighScore(parseInt(savedHighScore, 10));
     }
+    const savedLanguage = localStorage.getItem('professor_tapper_language') as Language;
+    if (savedLanguage === 'fr' || savedLanguage === 'en') {
+      setLanguage(savedLanguage);
+    }
   }, []);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+    localStorage.setItem('professor_tapper_language', lang);
+  };
 
   const handleStartGame = () => {
     setScore(0);
@@ -45,10 +57,10 @@ function App() {
   return (
     <ArcadeCabinet>
       {screen === 'start' && (
-        <StartScreen onStartGame={handleStartGame} highScore={highScore} />
+        <StartScreen onStartGame={handleStartGame} highScore={highScore} language={language} onLanguageChange={handleLanguageChange} />
       )}
       {screen === 'play' && (
-        <GameScreen onGameOver={handleGameOver} highScore={highScore} onExit={() => setScreen('start')} />
+        <GameScreen onGameOver={handleGameOver} highScore={highScore} onExit={() => setScreen('start')} language={language} />
       )}
       {screen === 'gameover' && (
         <GameOverScreen
@@ -56,6 +68,7 @@ function App() {
           level={level}
           highScore={highScore}
           onRestart={handleRestart}
+          language={language}
         />
       )}
     </ArcadeCabinet>
